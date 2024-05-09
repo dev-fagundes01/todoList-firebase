@@ -50,9 +50,15 @@ function showUserContent(user) {
   showItem(userContent)
 }
 
+// Mostrar conteudo para usuarios não autenticados
 function showAuth() {
   authForm.password.value = ''
   authForm.email.value = ''
   hideItem(userContent)
   showItem(auth)
 }
+
+// Atributos extras de configuração de e-mail
+var actionCodeSettings = {
+  url: 'http://127.0.0.1:5500/'
+} 
