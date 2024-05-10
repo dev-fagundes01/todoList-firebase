@@ -32,7 +32,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 // Função que permite ao usuário sair da conta dele
 function signOut() {
-    firebase.auth().signOut().catch(function (error) {
+    firebase.auth().signOut().catch(function () {
         console.log('falha ao sair da conta');
     })
 }
@@ -72,6 +72,16 @@ function signInWithGoogle() {
     showItem(loading)
     firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function (err) {
         alert('Houve um erro ao autenticar usando o Google')
+        console.log({err});
+        hideItem(loading)
+    })
+}
+
+// Função que permite a autenticação pelo GitHUb
+function signInWithGitHub() {
+    showItem(loading)
+    firebase.auth().signInWithPopup(new firebase.auth.GithubAuthProvider()).catch(function (err) {
+        alert('Houve um erro ao autenticar usando o GitHUb')
         console.log({err});
         hideItem(loading)
     })

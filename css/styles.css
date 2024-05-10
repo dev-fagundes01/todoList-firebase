@@ -72,7 +72,7 @@ p {
   margin: 4px;
 }
 
-img:hover {opacity: 0.75;}
+#auth img:hover {opacity: 0.75;}
 
 #userImg {
   height: 40px;
