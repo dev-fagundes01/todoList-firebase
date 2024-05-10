@@ -10,6 +10,8 @@ var userEmail = document.getElementById('userEmail')
 var pEmailVerified = document.getElementById('pEmailVerified')
 var sendEmailVerificationDiv = document.getElementById('sendEmailVerificationDiv')
 var passwordReset = document.getElementById('passwordReset')
+var userImg = document.getElementById('userImg')
+var userName = document.getElementById('userName')
 
 // Alterar o formulário de autenticação para o cadastro de novas contas
 function toggleToRegister() {
@@ -48,6 +50,9 @@ function showUserContent(user) {
     pEmailVerified.innerHTML = 'E-mail não verificado'
     showItem(sendEmailVerificationDiv)
   }
+  userImg.src = user.photoURL ? user.photoURL : './../img/unknownUser.png'
+  userName.innerHTML = user.displayName
+
   userEmail.innerHTML = user.email
   hideItem(auth)
   showItem(userContent)

@@ -34,7 +34,6 @@ firebase.auth().onAuthStateChanged(function (user) {
 function signOut() {
     firebase.auth().signOut().catch(function (error) {
         console.log('falha ao sair da conta');
-        console.log();
     })
 }
 
@@ -46,7 +45,7 @@ function sendEmailVerification() {
         alert('E-mail de verificação foi enviado para ' + user.email + '! Verifique sua caixa de entrada')
     }).catch(function (err) {
         alert('Houve um erro ao enviar o e-mail de verificação')
-        console.log({ first })
+        console.log({ user })
     }).finally(function () { hideItem(loading) })
 }
 
@@ -66,4 +65,14 @@ function sendPasswordResetEmail() {
     } else {
         alert('É preciso preencher o campo de e-mail para redefinir senha.')
     }
+}
+
+// Função que permite a autenticação pelo Google
+function signInWithGoogle() {
+    showItem(loading)
+    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function (err) {
+        alert('Houve um erro ao autenticar usando o Google')
+        console.log({err});
+        hideItem(loading)
+    })
 }
