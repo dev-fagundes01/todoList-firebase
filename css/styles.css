@@ -67,6 +67,10 @@ p {
   background-color: #44c;
 }
 
+.danger {
+  background-color: red;
+}
+
 #auth img {
   cursor: pointer;
   margin: 4px;
