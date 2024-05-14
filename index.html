@@ -18,11 +18,11 @@
 			</div>
 
 			<div id="loading">
-				<img src="./img/loading.gif" alt="Animação de carregamento">
+				<img src="./img/loading.gif" alt="Animação de carregamento" />
 			</div>
 
 			<!--Conteúdo destinado para usuários não autenticados-->
-			<div id="auth" class="center">
+			<div class="auth center">
 				<!--Formulário de autenticação-->
 				<form id="authForm">
 					<h3 id="authFormTitle">Acesse a sua conta para continuar</h3>
@@ -30,9 +30,16 @@
 					<label for="email">E-mail: </label>
 					<input type="email" placeholder="E-mail" id="email" />
 
-					<label for="password">Senha: </label>
-					<input type="password" placeholder="Senha" id="password" />
-
+					<div style="position: relative">
+						<label for="password">Senha: </label>
+						<input type="password" placeholder="Senha" id="password" />
+						<img
+							class="img-showPassword"
+							src="./img/eye.png"
+							alt="imagem de um olho para mostrar ou ocultar senha"
+							onclick="togglePasswordVisibility()"
+						/>
+					</div>
 					<button type="submit" id="submitAuthForm">Acessar</button>
 				</form>
 
@@ -59,28 +66,44 @@
 						Acesse a sua conta
 					</button>
 				</p>
-				
+
 				<!-- Outros provedores de autenticação -->
 				<p>
-					Ou acesse usando:<br>
-					<img src="./img/google.png" alt="Autenticação pelo Google" onclick="signInWithGoogle()">
-					<img src="./img/github.png" alt="Autenticação pelo GitHUb" onclick="signInWithGitHub()">
-					<img src="./img/facebook.png" alt="Autenticação pela Facebook" onclick="signInWithFacebook()">
+					Ou acesse usando:<br />
+					<img
+						src="./img/google.png"
+						alt="Autenticação pelo Google"
+						onclick="signInWithGoogle()"
+					/>
+					<img
+						src="./img/github.png"
+						alt="Autenticação pelo GitHUb"
+						onclick="signInWithGitHub()"
+					/>
+					<img
+						src="./img/facebook.png"
+						alt="Autenticação pela Facebook"
+						onclick="signInWithFacebook()"
+					/>
 				</p>
 			</div>
 
 			<!--Conteúdo destinado para usuários autenticados-->
 			<div id="userContent" class="startHidden">
-				<hr>
+				<hr />
 				<div id="userInfo" class="center">
-					<img id="userImg">
+					<img id="userImg" />
 					<p id="userName"></p>
 					<p id="userEmail"></p>
 					<p id="pEmailVerified"></p>
 					<div id="sendEmailVerificationDiv">
-						<button class="alternative" onclick="sendEmailVerification()">Verificar e-mail</button>
+						<button class="alternative" onclick="sendEmailVerification()">
+							Verificar e-mail
+						</button>
 					</div>
-					<button class="alternative" onclick="updateUserName()">Atualizar meu nome</button>
+					<button class="alternative" onclick="updateUserName()">
+						Atualizar meu nome
+					</button>
 					<button class="alternative" onclick="signOut()">Sair</button>
 					<button class="danger" onclick="deleteCount()">Excluir conta</button>
 				</div>

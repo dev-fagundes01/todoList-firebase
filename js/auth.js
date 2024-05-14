@@ -5,20 +5,13 @@ firebase.auth().languageCode = 'pt-BR'
 authForm.onsubmit = function (e) {
     showItem(loading)
     e.preventDefault();
-    if(authForm.email.value === '' || authForm.password.value === '') {
-        alert('Os campos E-mail e Senha deve ser preenchidos')
-        hideItem(loading)
-    } else if (authForm.submitAuthForm.innerHTML === 'Acessar') {
+    if (authForm.submitAuthForm.innerHTML === 'Acessar') {
         firebase.auth().signInWithEmailAndPassword(authForm.email.value, authForm.password.value).catch(function (error) {
-            console.log('Falha no acesso');
-            console.log(error);
-            hideItem(loading)
+            showError('Falha no acesso: ', error);
         })
     } else {
         firebase.auth().createUserWithEmailAndPassword(authForm.email.value, authForm.password.value).catch(function (error) {
-            console.log('Falha no Cadastro');
-            console.log(error);
-            hideItem(loading)
+            showError('Falha no cadastro: ', error);
         })
     }
 }
@@ -36,7 +29,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 // Função que permite ao usuário sair da conta dele
 function signOut() {
     firebase.auth().signOut().catch(function () {
-        console.log('falha ao sair da conta');
+        showError('Falha ao sair da conta: ', error);
     })
 }
 
@@ -47,8 +40,7 @@ function sendEmailVerification() {
     user.sendEmailVerification(actionCodeSettings).then(function () {
         alert('E-mail de verificação foi enviado para ' + user.email + '! Verifique sua caixa de entrada')
     }).catch(function (err) {
-        alert('Houve um erro ao enviar o e-mail de verificação')
-        console.log({ user })
+        showError('Falha ao enviar o e-mail de verificação: ', err);
     }).finally(function () { hideItem(loading) })
 }
 
@@ -60,8 +52,7 @@ function sendPasswordResetEmail() {
         firebase.auth().sendPasswordResetEmail(email, actionCodeSettings).then(function () {
             alert('E-mail de redefinição de foi enviado para' + email + '.');
         }).catch(function (err) {
-            alert('Houve um erro ao enviar e-mail de redefinição de senha!')
-            console.log(err);
+            showError('Falha ao enviar o e-mail de redefinição de senha: ', err);
         }).finally(function () {
             hideItem(loading)
         })
@@ -75,7 +66,7 @@ function signInWithGoogle() {
     showItem(loading)
     firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function (err) {
         alert('Houve um erro ao autenticar usando o Google')
-        console.log({ err });
+        showError('Falha ao autenticar usando o Google: ', err);
         hideItem(loading)
     })
 }
@@ -84,8 +75,8 @@ function signInWithGoogle() {
 function signInWithGitHub() {
     showItem(loading)
     firebase.auth().signInWithPopup(new firebase.auth.GithubAuthProvider()).catch(function (err) {
-        alert('Houve um erro ao autenticar usando o GitHUb')
-        console.log({ err });
+        alert('Houve um erro ao ')
+        showError('Falha ao autenticar usando o GitHUb: ', err);
         hideItem(loading)
     })
 }
@@ -94,8 +85,7 @@ function signInWithGitHub() {
 function signInWithFacebook() {
     showItem(loading)
     firebase.auth().signInWithPopup(new firebase.auth.FacebookAuthProvider()).catch(function (err) {
-        alert('Houve um erro ao autenticar usando o Facebook')
-        console.log({ err });
+        showError('Falha ao autenticar usando o Facebook: ', err);
         hideItem(loading)
     })
 }
@@ -109,8 +99,7 @@ function updateUserName() {
         firebase.auth().currentUser.updateProfile({
             displayName: newUserName
         }).catch(function (err) {
-            alert('Houve um erro ao atualizado o nome de usuário')
-            console.log({ err })
+            showError('Falha ao atualizar o nome de usuário: ', err);
         }).finally(function () { hideItem(loading) })
     } else {
         alert('O nome de usuário não pode ser vazio')
@@ -127,13 +116,12 @@ function deleteCount() {
             .then(() => {
                 console.log("Conta de usuário excluída com sucesso.");
             })
-            .catch((error) => {
-                console.error("Erro ao excluir conta de usuário:", error.message);
+            .catch((err) => {
+                showError('Falha ao excluir conta de usuário: ', err.message);
             }).finally(
                 hideItem(loading)
             )
     } else {
         console.error("Nenhum usuário autenticado encontrado.");
     }
-
 }

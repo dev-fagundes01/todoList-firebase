@@ -43,6 +43,13 @@ input {
   outline: none;
 }
 
+div .img-showPassword {
+  height: 2rem;
+  position: absolute;
+  right: 1.5rem;
+  bottom: -2px;
+}
+
 button {
   background-color: #4c4;
   font-size: 15px;
@@ -71,12 +78,12 @@ p {
   background-color: red;
 }
 
-#auth img {
+.auth img {
   cursor: pointer;
   margin: 4px;
 }
 
-#auth img:hover {opacity: 0.75;}
+.auth img:hover {opacity: 0.75;}
 
 #userImg {
   height: 40px;
