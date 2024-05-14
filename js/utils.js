@@ -1,4 +1,4 @@
-// Defindo referências para elementos da página
+// Definindo referências para elementos da página
 var auth = document.querySelector('.auth')
 var authForm = document.getElementById('authForm')
 var authFormTitle = document.getElementById('authFormTitle')
@@ -12,6 +12,8 @@ var sendEmailVerificationDiv = document.getElementById('sendEmailVerificationDiv
 var passwordReset = document.getElementById('passwordReset')
 var userImg = document.getElementById('userImg')
 var userName = document.getElementById('userName')
+
+var todoForm = document.querySelector('.todoForm')
 
 // Função que muda o tipo do input de password para text e vice-versa
 function togglePasswordVisibility() {
@@ -56,7 +58,6 @@ function hideItem(element) {
 }
 
 function showUserContent(user) {
-  console.table({user});
   if(user.providerData[0].providerId != 'password') {
     pEmailVerified.innerHTML = 'Autenticação por provedor confiável, não é necessário verificar e-mail'
     hideItem(sendEmailVerificationDiv)
@@ -111,3 +112,6 @@ function showError(prefix, err) {
 var actionCodeSettings = {
   url: 'https://todolist-2c452.firebaseapp.com'
 } 
+
+var database = firebase.database()
+var dbRefUsers = database.ref('users')
