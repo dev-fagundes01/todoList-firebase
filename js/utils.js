@@ -14,6 +14,8 @@ var userImg = document.getElementById('userImg')
 var userName = document.getElementById('userName')
 
 var todoForm = document.querySelector('.todoForm')
+var ulTodoList = document.querySelector('.ulTodoList')
+var todoCount = document.querySelector('.todoCount')
 
 // Função que muda o tipo do input de password para text e vice-versa
 function togglePasswordVisibility() {
@@ -75,6 +77,10 @@ function showUserContent(user) {
 
   userEmail.innerHTML = user.email
   hideItem(auth)
+
+  dbRefUsers.child(firebase.auth().currentUser.uid).on('value', function (dataSnapshot) {
+    fillTodoList(dataSnapshot)
+  })
   showItem(userContent)
 }
 
