@@ -9,9 +9,10 @@ todoForm.onsubmit = function (e) {
 
     dbRefUsers.child(firebase.auth().currentUser.uid).push(data).then(function () {
       console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
+      nameInput.value = ''
     }).catch(function (err) {
       showError('Falha ao adicionar tarefa: ', err);
-    })
+    })    
   } else {
     alert('O nome da tarefa não poder ser em branco!')
   }
@@ -35,6 +36,12 @@ function fillTodoList(dataSnapshot) {
     liRemoveBtn.setAttribute('onclick', 'removeTodo(\"' + item.key + '\")')
     liRemoveBtn.setAttribute('class', 'danger todoBtn')
     li.appendChild(liRemoveBtn)
+
+    var liUpdateBtn = document.createElement('button')
+    liUpdateBtn.appendChild(document.createTextNode('Editar'))
+    liUpdateBtn.setAttribute('onclick', 'updateTodo(\"' + item.key + '\")')
+    liUpdateBtn.setAttribute('class', 'alternative todoBtn')
+    li.appendChild(liUpdateBtn)
     
     ulTodoList.appendChild(li)
   })
@@ -47,5 +54,23 @@ function removeTodo(key) {
     dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove().catch(function (err) {
       showError('Falha ao remover tarefa: ', err);
     })
+  }
+}
+
+// Atualiza tarefas
+function updateTodo(key) {
+  var selectedItem = document.getElementById(key.value);
+  var newTodoName = prompt(`Escolha um novo nome para a tarefa '${selectedItem.innerHTML}'`, selectedItem.innerHTML)
+  if(newTodoName != '') {
+    var data = {
+      name: newTodoName
+    }
+    dbRefUsers.child(firebase.auth().currentUser.uid).child(key).update(data).then(function() {
+      console.log(`Tarefa ${data.name} atualizada com sucesso`);
+    }).catch(function (err) {
+      showError('Falha ao atualizar tarefa: ', err);
+    })
+  } else {
+    alert('O nome da tarefa não pode ser em branco para atualizar a tarefa')
   }
 }
