@@ -12,6 +12,7 @@ var sendEmailVerificationDiv = document.getElementById('sendEmailVerificationDiv
 var passwordReset = document.getElementById('passwordReset')
 var userImg = document.getElementById('userImg')
 var userName = document.getElementById('userName')
+var search = document.getElementById('search')
 
 var todoForm = document.querySelector('.todoForm')
 var ulTodoList = document.querySelector('.ulTodoList')
@@ -78,10 +79,29 @@ function showUserContent(user) {
   userEmail.innerHTML = user.email
   hideItem(auth)
 
-  dbRefUsers.child(firebase.auth().currentUser.uid).on('value', function (dataSnapshot) {
+  getDefaultTodoList() 
+  search.onkeyup = function() {
+    if (search.value != '') {
+      var searchText = search.value.toLowerCase()
+      dbRefUsers.child(user.uid)
+      .orderByChild('nameLowerCase')
+      .startAt(searchText).endAt(searchText + '\uf8ff').once('value').then(function (dataSnapshot) {
+        fillTodoList(dataSnapshot)
+      })
+    } else {
+      getDefaultTodoList()
+    }
+  }
+  showItem(userContent)
+}
+
+// Busca tarefas em tempo real (Listagem padrão usando o on)
+function getDefaultTodoList( ) {
+  dbRefUsers.child(firebase.auth().currentUser.uid)
+  .orderByChild('name')
+  .on('value', function (dataSnapshot) {
     fillTodoList(dataSnapshot)
   })
-  showItem(userContent)
 }
 
 // Mostrar conteudo para usuarios não autenticados
