@@ -3,6 +3,16 @@ todoForm.onsubmit = function (e) {
   var nameInput = document.querySelector('.name')
   e.preventDefault();
   if (nameInput.value != "") {
+    var file = todoForm.file.files[0]
+    if (file != null) {
+      if (file.type.includes('image')) {
+        var imgName = firebase.database().ref().push().key + '-' + file.name
+        var imgPath = 'todoListFiles /' + firebase.auth().currentUser.uid + '/' + imgName
+
+        var storageRef = firebase.storage().ref(imgPath)
+        storageRef.put(file)
+      }
+    }
     var data = {
       name: nameInput.value,
       nameLowerCase: nameInput.value.toLowerCase()
@@ -26,21 +36,23 @@ function fillTodoList(dataSnapshot) {
   todoCount.innerHTML = num + (num > 1 ? ' Tarefas' : ' Tarefa')
   dataSnapshot.forEach(function (item) {
     var value = item.val()
+    var key = item.key
+
     var li = document.createElement('li')
     var spanLi = document.createElement('span')
     spanLi.appendChild(document.createTextNode(value.name))
-    spanLi.id = value.key
+    spanLi.id = key
     li.appendChild(spanLi)
-
+    
     var liRemoveBtn = document.createElement('button')
     liRemoveBtn.appendChild(document.createTextNode('Excluir'))
-    liRemoveBtn.setAttribute('onclick', 'removeTodo(\"' + item.key + '\")')
+    liRemoveBtn.setAttribute('onclick', 'removeTodo(\"' + key + '\")')
     liRemoveBtn.setAttribute('class', 'danger todoBtn')
     li.appendChild(liRemoveBtn)
-
+    
     var liUpdateBtn = document.createElement('button')
     liUpdateBtn.appendChild(document.createTextNode('Editar'))
-    liUpdateBtn.setAttribute('onclick', 'updateTodo(\"' + item.key + '\")')
+    liUpdateBtn.setAttribute('onclick', 'updateTodo(\"' + key + '\")')
     liUpdateBtn.setAttribute('class', 'alternative todoBtn')
     li.appendChild(liUpdateBtn)
     
@@ -49,7 +61,11 @@ function fillTodoList(dataSnapshot) {
 }
 // Remove tarefas
 function removeTodo(key) {
-  var idLi = document.getElementById(key.value)
+  var idLi = document.getElementById(key);
+  if (!idLi) {
+    console.error('Elemento não encontrado com o id: ', key);
+  }
+  console.log(idLi);
   var removalConfirmation = confirm(`Você realmente deseja remover a tarefa '${idLi.innerHTML}'?`)
   if(removalConfirmation) {
     dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove().catch(function (err) {
@@ -60,7 +76,10 @@ function removeTodo(key) {
 
 // Atualiza tarefas
 function updateTodo(key) {
-  var selectedItem = document.getElementById(key.value);
+  var selectedItem = document.getElementById(key);
+  if (!idLi) {
+    console.error('Elemento não encontrado com o id: ', key);
+  }
   var newTodoName = prompt(`Escolha um novo nome para a tarefa '${selectedItem.innerHTML}'`, selectedItem.innerHTML)
   if(newTodoName != '') {
     var data = {
