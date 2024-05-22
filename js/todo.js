@@ -10,7 +10,11 @@ todoForm.onsubmit = function (e) {
         var imgPath = 'todoListFiles /' + firebase.auth().currentUser.uid + '/' + imgName
 
         var storageRef = firebase.storage().ref(imgPath)
-        storageRef.put(file)
+        var upload = storageRef.put(file)
+
+        trackUpload(upload)
+      } else {
+        alert('O arquivo selecionado precisa ser uma imagem. Tente novamente.')
       }
     }
     var data = {
@@ -26,6 +30,42 @@ todoForm.onsubmit = function (e) {
     })    
   } else {
     alert('O nome da tarefa não poder ser em branco!')
+  }
+}
+
+// Rastreia a progresso de upload
+function trackUpload(upload) {
+  showItem(progressFeedback)
+  upload.on('state_changed', function (snapshot) {
+    console.log((snapshot.bytesTransferred / snapshot.totalBytes * 100).toFixed(2) + '%');
+    progress.value = snapshot.bytesTransferred / snapshot.totalBytes * 100
+  }, function (err) {
+    showAuthError('Falha no upload da imagem', err);
+    hideItem(progressFeedback)
+  }, function () {
+    console.log('Sucesso no upload');
+    hideItem(progressFeedback)
+  })
+
+  var playPauseUpload = true
+  playPauseBtn.onclick = function () {
+    playPauseUpload = !playPauseUpload;
+
+    if (playPauseUpload) {
+      upload.resume()
+      playPauseBtn.innerHTML = 'Pausar'
+      console.log('Upload retomado');
+    } else {
+      upload.pause()
+      playPauseBtn.innerHTML = 'Continuar'
+      console.log('upload pausado');
+    }
+  }
+
+  cancelBtn.onclick = function () {
+    upload.cancel()
+    alert('Upload cancelado pelo usuário')
+    hideItem(progressFeedback)
   }
 }
 
