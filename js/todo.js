@@ -19,14 +19,14 @@ todoForm.onsubmit = function (e) {
               name: nameInput.value,
               nameLowerCase: nameInput.value.toLowerCase()
             }
-        
+
             dbRefUsers.child(firebase.auth().currentUser.uid).push(data).then(function () {
               console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
               nameInput.value = ''
               todoForm.file.value = ''
             }).catch(function (err) {
               showError('Falha ao adicionar tarefa (use no máximo 30 caracteres): ', err);
-            })            
+            })
           })
         }).catch(function (err) {
           showError('Falha ao adicionar tarefa: ', err);
@@ -39,7 +39,7 @@ todoForm.onsubmit = function (e) {
         name: nameInput.value,
         nameLowerCase: nameInput.value.toLowerCase()
       }
-  
+
       dbRefUsers.child(firebase.auth().currentUser.uid).push(data).then(function () {
         console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
         nameInput.value = ''
@@ -100,7 +100,6 @@ function fillTodoList(dataSnapshot) {
     var key = item.key
 
     var li = document.createElement('li')
-
     li.id = key
 
     var imgTodo = document.createElement('img')
@@ -129,23 +128,46 @@ function fillTodoList(dataSnapshot) {
 }
 // Remove tarefas
 function removeTodo(key) {
-  var idLi = document.getElementById(key);
-  if (!idLi) {
+  var todoName = document.querySelector('#' + key + '> span');
+  var todoImg = document.querySelector('#' + key + '> img');
+  // var todoName = document.getElementById(key);
+  if (!todoName) {
     console.error('Elemento não encontrado com o id: ', key);
   }
-  console.log(idLi);
-  var removalConfirmation = confirm(`Você realmente deseja remover a tarefa '${idLi.innerHTML}'?`)
+  var removalConfirmation = confirm(`Você realmente deseja remover a tarefa '${todoName.innerHTML}'?`)
   if (removalConfirmation) {
-    dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove().catch(function (err) {
+    dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove().then(function () {
+      console.log(`Tarefa ${todoName.innerHTML} removida com  sucesso`);
+      removeFile(todoImg.src)
+    }).catch(function (err) {
       showError('Falha ao remover tarefa: ', err);
     })
+  }
+}
+
+// Remove arquivos
+function removeFile(imgUrl) {
+  console.log(imgUrl);
+
+  var result = imgUrl.indexOf('img/defaultTodo.png')
+  console.log(result);
+
+  if (result === -1) {
+    firebase.storage().refFromURL(imgUrl).delete().then(function () {
+      console.log('Arquivo removido com sucesso');
+    }).catch(function (err) {
+      console.log('Falha ao remover arquivo');
+      console.log(err);
+    })
+  } else {
+    console.log('img padrão removida da lista');
   }
 }
 
 // Atualiza tarefas
 function updateTodo(key) {
   var selectedItem = document.getElementById(key);
-  if (!idLi) {
+  if (!todoName) {
     console.error('Elemento não encontrado com o id: ', key);
   }
   var newTodoName = prompt(`Escolha um novo nome para a tarefa '${selectedItem.innerHTML}'`, selectedItem.innerHTML)
