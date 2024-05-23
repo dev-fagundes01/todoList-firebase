@@ -102,6 +102,17 @@ li:hover {
   border-radius: 8px;
 }
 
+.imgTodo {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  margin-right: 4px;
+}
+
+span {
+  position: relative;
+  bottom: 3px;
+}
 .todoBtn {
   float: right;
   margin: 0 0 0 4px;

@@ -100,9 +100,16 @@ function fillTodoList(dataSnapshot) {
     var key = item.key
 
     var li = document.createElement('li')
+
+    li.id = key
+
+    var imgTodo = document.createElement('img')
+    imgTodo.src = value.imgUrl ? value.imgUrl : '../img/defaultTodo.png'
+    imgTodo.setAttribute('class', 'imgTodo')
+    li.appendChild(imgTodo)
+
     var spanLi = document.createElement('span')
     spanLi.appendChild(document.createTextNode(value.name))
-    spanLi.id = key
     li.appendChild(spanLi)
 
     var liRemoveBtn = document.createElement('button')
