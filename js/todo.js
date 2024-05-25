@@ -1,6 +1,6 @@
 // Trata a submissão do formulário de tarefas
+var nameInput = document.querySelector('.name')
 todoForm.onsubmit = function (e) {
-  var nameInput = document.querySelector('.name')
   e.preventDefault();
   if (nameInput.value != "") {
     var file = todoForm.file.files[0]
@@ -86,6 +86,7 @@ function trackUpload(upload) {
     cancelBtn.onclick = function () {
       upload.cancel()
       hideItem(progressFeedback)
+      resetTodoForm()
     }
   })
 }
@@ -130,7 +131,6 @@ function fillTodoList(dataSnapshot) {
 function removeTodo(key) {
   var todoName = document.querySelector('#' + key + '> span');
   var todoImg = document.querySelector('#' + key + '> img');
-  // var todoName = document.getElementById(key);
   if (!todoName) {
     console.error('Elemento não encontrado com o id: ', key);
   }
@@ -165,23 +165,71 @@ function removeFile(imgUrl) {
 }
 
 // Atualiza tarefas
+var updateTodoKey = null
 function updateTodo(key) {
-  var selectedItem = document.getElementById(key);
-  if (!todoName) {
-    console.error('Elemento não encontrado com o id: ', key);
-  }
-  var newTodoName = prompt(`Escolha um novo nome para a tarefa '${selectedItem.innerHTML}'`, selectedItem.innerHTML)
-  if (newTodoName != '') {
-    var data = {
-      name: newTodoName,
-      nameLowerCase: newTodoName.toLowerCase()
+  updateTodoKey = key
+  var todoName = document.querySelector('#' + key + '> span');
+  todoFormTitle.innerHTML = '<strong>Editar a tarefa: </strong>' + todoName.innerHTML;
+  nameInput.value = todoName.innerHTML;
+  hideItem(submitTodoForm)
+  showItem(divUpdateTodo)
+}
+
+function resetTodoForm() {
+  todoFormTitle.innerHTML = 'Adicionar tarefa:'
+  hideItem(divUpdateTodo)
+  submitTodoForm.style.display = 'initial'
+  todoForm.file.value = ''
+  nameInput.value = ''
+}
+
+function confirmTodoUpdate() {
+  hideItem(divUpdateTodo)
+  if (nameInput.value != '') {
+    var todoImg = document.querySelector('#' + key + '> img');
+    var file = todoForm.file.files[0]
+    if (file != null) {
+      if (file.type.includes('image')) {
+        var imgName = firebase.database().ref().push().updateTodoKey + '-' + file.name
+        var imgPath = 'todoListFiles/' + firebase.auth().currentUser.uid + '/' + imgName
+
+        var storageRef = firebase.storage().ref(imgPath)
+        var upload = storageRef.put(file)
+
+        trackUpload(upload).then(function () {
+          storageRef.getDownloadURL().then(function (downloadURL) {
+            var data = {
+              imgUrl: downloadURL,
+              name: newTodoName,
+              nameLowerCase: newTodoName.toLowerCase()
+            }
+            dbRefUsers.child(firebase.auth().currentUser.uid).child(updateTodoKey).update(data).then(function () {
+              console.log(`Tarefa ${data.name} atualizada com sucesso`);
+            }).catch(function (err) {
+              showError('Falha ao atualizar tarefa: ', err);
+            })
+
+            removeFile(todoImg)
+            resetTodoForm()
+          })
+        })
+      } else {
+        alert('O arquivo selecionado precisa ser uma imagem. Tente novamente.')
+      }
+    } else {
+      var data = {
+        name: newTodoName,
+        nameLowerCase: newTodoName.toLowerCase()
+      }
+      dbRefUsers.child(firebase.auth().currentUser.uid).child(updateTodoKey).update(data).then(function () {
+        console.log(`Tarefa ${data.name} atualizada com sucesso`);
+      }).catch(function (err) {
+        showError('Falha ao atualizar tarefa: ', err);
+      })
+
+      resetTodoForm()
     }
-    dbRefUsers.child(firebase.auth().currentUser.uid).child(key).update(data).then(function () {
-      console.log(`Tarefa ${data.name} atualizada com sucesso`);
-    }).catch(function (err) {
-      showError('Falha ao atualizar tarefa: ', err);
-    })
   } else {
-    alert('O nome da tarefa não pode ser em branco para atualizar a tarefa')
+    alert('O nome da tarefa não poder ser em branco!')
   }
 }

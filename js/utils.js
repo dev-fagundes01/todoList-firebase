@@ -17,8 +17,11 @@ var progressFeedback = document.getElementById('progressFeedback')
 var progress = document.getElementById('progress')
 var playPauseBtn = document.getElementById('playPauseBtn')
 var cancelBtn = document.getElementById('cancelBtn')
+var divUpdateTodo = document.getElementById('divUpdateTodo')
+var todoFormTitle = document.getElementById('todoFormTitle')
 
 var todoForm = document.querySelector('.todoForm')
+var submitTodoForm = document.querySelector('.submitTodoForm')
 var ulTodoList = document.querySelector('.ulTodoList')
 var todoCount = document.querySelector('.todoCount')
 
@@ -133,7 +136,7 @@ function showError(prefix, err) {
       break;
     case 'auth/popup-closed-by-user': alert(prefix + '' + 'O popup de autenticação foi fechado antes da operação	ser concluida!')      
       break;
-    case 'storage/canceled': alert(prefix + '' + 'O upload foi cancelado pelo usuário')      
+    case 'storage/canceled':    
       break;
   
     default: alert(prefix + '' + err.message)
