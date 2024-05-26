@@ -21,6 +21,7 @@ var divUpdateTodo = document.getElementById('divUpdateTodo')
 
 var todoForm = document.querySelector('.todoForm')
 var submitTodoForm = document.querySelector('.submitTodoForm')
+var submitTodoForm = document.querySelector('.submitTodoForm')
 var ulTodoList = document.querySelector('.ulTodoList')
 var todoCount = document.querySelector('.todoCount')
 

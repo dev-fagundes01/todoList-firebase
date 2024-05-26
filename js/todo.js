@@ -1,5 +1,6 @@
 // Trata a submissão do formulário de tarefas
 var nameInput = document.querySelector('.name')
+var nameInput = document.querySelector('.name')
 todoForm.onsubmit = function (e) {
   e.preventDefault();
   if (nameInput.value != "") {
@@ -98,6 +99,7 @@ function fillTodoList(dataSnapshot) {
     var key = item.key
 
     var li = document.createElement('li')
+
     li.id = key
 
     var imgTodo = document.createElement('img')
@@ -126,18 +128,14 @@ function fillTodoList(dataSnapshot) {
 }
 // Remove tarefas
 function removeTodo(key) {
-  var todoName = document.querySelector('#' + key + '> span');
-  var todoImg = document.querySelector('#' + key + '> img');
-  // var todoName = document.getElementById(key);
-  if (!todoName) {
+  var idLi = document.getElementById(key);
+  if (!idLi) {
     console.error('Elemento não encontrado com o id: ', key);
   }
-  var removalConfirmation = confirm(`Você realmente deseja remover a tarefa '${todoName.innerHTML}'?`)
+  console.log(idLi);
+  var removalConfirmation = confirm(`Você realmente deseja remover a tarefa '${idLi.innerHTML}'?`)
   if (removalConfirmation) {
-    dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove().then(function () {
-      console.log(`Tarefa ${todoName.innerHTML} removida com  sucesso`);
-      removeFile(todoImg.src)
-    }).catch(function (err) {
+    dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove().catch(function (err) {
       showError('Falha ao remover tarefa: ', err);
     })
   }
@@ -163,6 +161,7 @@ function removeFile(imgUrl) {
 }
 
 // Atualiza tarefas
+var updateTodoKey = null
 var updateTodoKey = null
 function updateTodo(key) {
   updateTodoKey = key;
@@ -251,6 +250,6 @@ function updateTodo2(key) {
       showError('Falha ao atualizar tarefa: ', err);
     })
   } else {
-    alert('O nome da tarefa não pode ser em branco para atualizar a tarefa')
+    alert('O nome da tarefa não poder ser em branco!')
   }
 }
