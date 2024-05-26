@@ -1,6 +1,5 @@
 // Trata a submissão do formulário de tarefas
 var nameInput = document.querySelector('.name')
-var nameInput = document.querySelector('.name')
 todoForm.onsubmit = function (e) {
   e.preventDefault();
   if (nameInput.value != "") {
@@ -20,7 +19,7 @@ todoForm.onsubmit = function (e) {
               name: nameInput.value,
               nameLowerCase: nameInput.value.toLowerCase()
             }
-            confirmTodoCreate(data)
+            completeTodoCreate(data)
           })
         }).catch(function (err) {
           showError('Falha ao adicionar tarefa: ', err);
@@ -33,14 +32,14 @@ todoForm.onsubmit = function (e) {
         name: nameInput.value,
         nameLowerCase: nameInput.value.toLowerCase()
       }
-      confirmTodoCreate(data)
+      completeTodoCreate(data)
     }
   } else {
     alert('O nome da tarefa não poder ser em branco!')
   }
 }
 
-function confirmTodoCreate(data) {
+function completeTodoCreate(data) {
   dbRefUsers.child(firebase.auth().currentUser.uid).push(data).then(function () {
     console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
     nameInput.value = ''
@@ -128,7 +127,7 @@ function fillTodoList(dataSnapshot) {
 }
 // Remove tarefas
 function removeTodo(key) {
-  var idLi = document.getElementById(key);
+  var idLi = document.querySelector('#' + key + '> span');
   if (!idLi) {
     console.error('Elemento não encontrado com o id: ', key);
   }
@@ -161,7 +160,6 @@ function removeFile(imgUrl) {
 }
 
 // Atualiza tarefas
-var updateTodoKey = null
 var updateTodoKey = null
 function updateTodo(key) {
   updateTodoKey = key;
@@ -201,14 +199,8 @@ function confirmTodoUpdate() {
               name: nameInput.value,
               nameLowerCase: nameInput.value.toLowerCase()
             }
-            dbRefUsers.child(firebase.auth().currentUser.uid).child(updateTodoKey).update(data).then(function () {
-              console.log(`Tarefa ${data.name} atualizada com sucesso`);
-            }).catch(function (err) {
-              showError('Falha ao atualizar tarefa: ', err);
-            })
-
+            completeTodoUpdate(data);
             removeFile(todoImg.src)
-            resetTodoForm()
           })
         }).catch(function (err) {
           showError('Falha ao atualizar tarefa: ', err);
@@ -221,35 +213,18 @@ function confirmTodoUpdate() {
         name: nameInput.value,
         nameLowerCase: nameInput.value.toLowerCase()
       }
-      dbRefUsers.child(firebase.auth().currentUser.uid).child(updateTodoKey).update(data).then(function () {
-        console.log(`Tarefa ${data.name} atualizada com sucesso`);
-      }).catch(function (err) {
-        showError('Falha ao atualizar tarefa: ', err);
-      })
-      resetTodoForm()
+      completeTodoUpdate(data)
     }
   } else {
     alert('O nome da tarefa não poder ser em vazio!')
   }
 }
 
-function updateTodo2(key) {
-  var selectedItem = document.querySelector('#' + key + '> span');
-  if (!selectedItem) {
-    console.error('Elemento não encontrado com o id: ', key);
-  }
-  var newTodoName = prompt(`Escolha um novo nome para a tarefa '${selectedItem.innerHTML}'`, selectedItem.innerHTML)
-  if (newTodoName != '') {
-    var data = {
-      name: newTodoName,
-      nameLowerCase: newTodoName.toLowerCase()
-    }
-    dbRefUsers.child(firebase.auth().currentUser.uid).child(key).update(data).then(function () {
-      console.log(`Tarefa ${data.name} atualizada com sucesso`);
-    }).catch(function (err) {
-      showError('Falha ao atualizar tarefa: ', err);
-    })
-  } else {
-    alert('O nome da tarefa não poder ser em branco!')
-  }
+function completeTodoUpdate(data) {
+  dbRefUsers.child(firebase.auth().currentUser.uid).child(updateTodoKey).update(data).then(function () {
+    console.log(`Tarefa ${data.name} atualizada com sucesso`);
+  }).catch(function (err) {
+    showError('Falha ao atualizar tarefa: ', err);
+  })
+  resetTodoForm()
 }
