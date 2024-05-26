@@ -1,6 +1,6 @@
 // Trata a submissão do formulário de tarefas
+var nameInput = document.querySelector('.name')
 todoForm.onsubmit = function (e) {
-  var nameInput = document.querySelector('.name')
   e.preventDefault();
   if (nameInput.value != "") {
     var file = todoForm.file.files[0]
@@ -86,6 +86,7 @@ function trackUpload(upload) {
     cancelBtn.onclick = function () {
       upload.cancel()
       hideItem(progressFeedback)
+      resetTodoForm()
     }
   })
 }
@@ -129,10 +130,8 @@ function fillTodoList(dataSnapshot) {
 }
 // Remove tarefas
 function removeTodo(key) {
-  var todoName = document.querySelector('#' + key + '> span');
-  var todoImg = document.querySelector('#' + key + '> img');
-  // var todoName = document.getElementById(key);
-  if (!todoName) {
+  var idLi = document.getElementById(key);
+  if (!idLi) {
     console.error('Elemento não encontrado com o id: ', key);
   }
   console.log(idLi);
@@ -145,9 +144,10 @@ function removeTodo(key) {
 }
 
 // Atualiza tarefas
+var updateTodoKey = null
 function updateTodo(key) {
   var selectedItem = document.getElementById(key);
-  if (!todoName) {
+  if (!idLi) {
     console.error('Elemento não encontrado com o id: ', key);
   }
   var newTodoName = prompt(`Escolha um novo nome para a tarefa '${selectedItem.innerHTML}'`, selectedItem.innerHTML)
@@ -162,6 +162,6 @@ function updateTodo(key) {
       showError('Falha ao atualizar tarefa: ', err);
     })
   } else {
-    alert('O nome da tarefa não pode ser em branco para atualizar a tarefa')
+    alert('O nome da tarefa não poder ser em branco!')
   }
 }
