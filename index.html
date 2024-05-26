@@ -120,18 +120,13 @@
 				<div class="center">
 					<!-- Formulário de tarefas -->
 					<form class="todoForm">
-						<h3 id="todoFormTitle">Adicionar tarefa:</h3>
+						<h3 class="todoFormTitle">Adicionar tarefa:</h3>
 						<label for="name">Tarefa:</label>
 						<input type="text" class="name" placeholder="Tarefa">
 						<label for="file"></label>
 						<input type="file" id="file" accept="image/">
 						<button type="submit" class="submitTodoForm">Adicionar tarefa</button>
 					</form>
-
-					<div id="divUpdateTodo" class="startHidden">
-						<button onclick="confirmTodoUpdate()">Confirmar Atualização</button>
-						<button onclick="resetTodoForm()" class="alternative">Cancelar Atualização</button>
-					</div>
 
 					<div id="progressFeedback" class="startHidden">
 						<progress max="100" id="progress"></progress>
