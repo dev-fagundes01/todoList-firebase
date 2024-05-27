@@ -138,6 +138,8 @@ function showError(prefix, err) {
       break;
     case 'storage/canceled':      
       break;
+    case 'storage/unauthorized': alert(prefix + '' + 'Falha ao acessar o Cloud Storage!') 
+      break;
   
     default: alert(prefix + '' + err.message)
   }

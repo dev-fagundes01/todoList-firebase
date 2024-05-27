@@ -5,6 +5,10 @@ todoForm.onsubmit = function (e) {
   if (nameInput.value != "") {
     var file = todoForm.file.files[0]
     if (file != null) {
+      if (file.size > 1024 * 1024 * 2) {
+        alert(`A imagem não pode ser maior do que 2 MB. Imagem selecionada tem: ${(file.size / 1024 / 1024).toFixed(3)} MB`)
+        return
+      }
       if (file.type.includes('image')) {
         var imgName = firebase.database().ref().push().key + '-' + file.name
         var imgPath = 'todoListFiles/' + firebase.auth().currentUser.uid + '/' + imgName
@@ -185,6 +189,10 @@ function confirmTodoUpdate() {
     var todoImg = document.querySelector('#' + updateTodoKey + '> img');
     var file = todoForm.file.files[0]
     if (file != null) {
+      if (file.size > 1024 * 1024 * 2) {
+        alert(`A imagem não pode ser maior do que 2 MB. Imagem selecionada tem: ${(file.size / 1024 / 1024).toFixed(3)} MB`)
+        return
+      }
       if (file.type.includes('image')) {
         var imgName = firebase.database().ref().push().updateTodoKey + '-' + file.name
         var imgPath = 'todoListFiles/' + firebase.auth().currentUser.uid + '/' + imgName
