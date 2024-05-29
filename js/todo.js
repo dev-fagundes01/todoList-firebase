@@ -44,13 +44,21 @@ todoForm.onsubmit = function (e) {
 }
 
 function completeTodoCreate(data) {
-  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).collection('tarefas').add(data).then(function () {
+  dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').add(data).then(function () {
     console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
     nameInput.value = ''
     todoForm.file.value = ''
   }).catch(function (err) {
     showError('Falha ao adicionar tarefa (use no máximo 30 caracteres): ', err);
   })
+
+  // dbRefUsers.child(firebase.auth().currentUser.uid).push(data).then(function () {
+  //   console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
+  //   nameInput.value = ''
+  //   todoForm.file.value = ''
+  // }).catch(function (err) {
+  //   showError('Falha ao adicionar tarefa (use no máximo 30 caracteres): ', err);
+  // })
 }
 
 // Rastreia a progresso de upload
@@ -95,15 +103,19 @@ function trackUpload(upload) {
 // Exibe a lista de tarefas do usuário
 function fillTodoList(dataSnapshot) {
   ulTodoList.innerHTML = ''
-  var num = dataSnapshot.numChildren()
+  var num = dataSnapshot.size
+  // var num = dataSnapshot.numChildren()
   todoCount.innerHTML = num + (num > 1 ? ' Tarefas' : ' Tarefa')
   dataSnapshot.forEach(function (item) {
-    var value = item.val()
-    var key = item.key
+    var value = item.data()
+    var id = item.id
+    // var value = item.val()
+    // var key = item.key
 
     var li = document.createElement('li')
 
-    li.id = key
+    li.id = id
+    // li.id = key
 
     var imgTodo = document.createElement('img')
     imgTodo.src = value.imgUrl ? value.imgUrl : '../img/defaultTodo.png'
@@ -116,13 +128,13 @@ function fillTodoList(dataSnapshot) {
 
     var liRemoveBtn = document.createElement('button')
     liRemoveBtn.appendChild(document.createTextNode('Excluir'))
-    liRemoveBtn.setAttribute('onclick', 'removeTodo(\"' + key + '\")')
+    liRemoveBtn.setAttribute('onclick', 'removeTodo(\"' + id + '\")')
     liRemoveBtn.setAttribute('class', 'danger todoBtn')
     li.appendChild(liRemoveBtn)
 
     var liUpdateBtn = document.createElement('button')
     liUpdateBtn.appendChild(document.createTextNode('Editar'))
-    liUpdateBtn.setAttribute('onclick', 'updateTodo(\"' + key + '\")')
+    liUpdateBtn.setAttribute('onclick', 'updateTodo(\"' + id + '\")')
     liUpdateBtn.setAttribute('class', 'alternative todoBtn')
     li.appendChild(liUpdateBtn)
 

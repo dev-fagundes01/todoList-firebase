@@ -90,11 +90,17 @@ function showUserContent(user) {
   search.onkeyup = function() {
     if (search.value != '') {
       var searchText = search.value.toLowerCase()
-      dbRefUsers.child(user.uid)
-      .orderByChild('nameLowerCase')
-      .startAt(searchText).endAt(searchText + '\uf8ff').once('value').then(function (dataSnapshot) {
+      dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas')
+      .orderBy('nameLowerCase')
+      .startAt(searchText).endAt(searchText + '\uf8ff').get().then(function (dataSnapshot) {
         fillTodoList(dataSnapshot)
       })
+
+      // dbRefUsers.child(user.uid)
+      // .orderByChild('nameLowerCase')
+      // .startAt(searchText).endAt(searchText + '\uf8ff').once('value').then(function (dataSnapshot) {
+      //   fillTodoList(dataSnapshot)
+      // })
     } else {
       getDefaultTodoList()
     }
@@ -104,11 +110,15 @@ function showUserContent(user) {
 
 // Busca tarefas em tempo real (Listagem padrão usando o on)
 function getDefaultTodoList( ) {
-  dbRefUsers.child(firebase.auth().currentUser.uid)
-  .orderByChild('nameLowerCase')
-  .on('value', function (dataSnapshot) {
+  dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').orderBy('nameLowerCase').onSnapshot(function (dataSnapshot) {
     fillTodoList(dataSnapshot)
   })
+
+  // dbRefUsers.child(firebase.auth().currentUser.uid)
+  // .orderByChild('nameLowerCase')
+  // .on('value', function (dataSnapshot) {
+  //   fillTodoList(dataSnapshot)
+  // })
 }
 
 // Mostrar conteudo para usuarios não autenticados
@@ -154,3 +164,5 @@ var actionCodeSettings = {
 
 var database = firebase.database()
 var dbRefUsers = database.ref('users')
+
+var dbFirestore = firebase.firestore().collection('users')
