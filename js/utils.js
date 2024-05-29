@@ -105,7 +105,7 @@ function showUserContent(user) {
 // Busca tarefas em tempo real (Listagem padrão usando o on)
 function getDefaultTodoList( ) {
   dbRefUsers.child(firebase.auth().currentUser.uid)
-  .orderByChild('name')
+  .orderByChild('nameLowerCase')
   .on('value', function (dataSnapshot) {
     fillTodoList(dataSnapshot)
   })
@@ -133,6 +133,8 @@ function showError(prefix, err) {
     case 'auth/weak-password': alert(prefix + '' + 'Senha deve ter no minimo 6 caracteres!')      
       break;
     case 'auth/email-already-in-use': alert(prefix + '' + 'E-mail já está em uso por outra conta!')      
+      break;
+    case 'auth/account-exists-with-different-credential': alert(prefix + '' + 'Já existe uma conta com o mesmo endereço de e-mail, mas com credenciais de login diferentes. Faça login usando um provedor associado a este endereço de e-mail.')      
       break;
     case 'auth/popup-closed-by-user': alert(prefix + '' + 'O popup de autenticação foi fechado antes da operação	ser concluida!')      
       break;

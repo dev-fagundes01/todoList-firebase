@@ -44,7 +44,7 @@ todoForm.onsubmit = function (e) {
 }
 
 function completeTodoCreate(data) {
-  dbRefUsers.child(firebase.auth().currentUser.uid).push(data).then(function () {
+  firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).collection('tarefas').add(data).then(function () {
     console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
     nameInput.value = ''
     todoForm.file.value = ''
@@ -184,7 +184,7 @@ function resetTodoForm() {
 
 function confirmTodoUpdate() {
   hideItem(divUpdateTodo)
-  
+
   if (nameInput.value != "") {
     var todoImg = document.querySelector('#' + updateTodoKey + '> img');
     var file = todoForm.file.files[0]
