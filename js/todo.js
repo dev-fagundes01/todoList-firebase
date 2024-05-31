@@ -44,6 +44,7 @@ todoForm.onsubmit = function (e) {
 }
 
 function completeTodoCreate(data) {
+  dbRefUsers.child(firebase.auth().currentUser.uid).push(data)
   dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').add(data).then(function () {
     console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
     nameInput.value = ''
@@ -52,13 +53,6 @@ function completeTodoCreate(data) {
     showError('Falha ao adicionar tarefa (use no máximo 30 caracteres): ', err);
   })
 
-  // dbRefUsers.child(firebase.auth().currentUser.uid).push(data).then(function () {
-  //   console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
-  //   nameInput.value = ''
-  //   todoForm.file.value = ''
-  // }).catch(function (err) {
-  //   showError('Falha ao adicionar tarefa (use no máximo 30 caracteres): ', err);
-  // })
 }
 
 // Rastreia a progresso de upload
@@ -147,10 +141,10 @@ function removeTodo(key) {
   if (!idLi) {
     console.error('Elemento não encontrado com o id: ', key);
   }
-  console.log(idLi);
   var removalConfirmation = confirm(`Você realmente deseja remover a tarefa '${idLi.innerHTML}'?`)
   if (removalConfirmation) {
-    dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove().catch(function (err) {
+    // dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove()
+    dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').doc(key).delete().catch(function (err) {
       showError('Falha ao remover tarefa: ', err);
     })
   }
@@ -241,7 +235,8 @@ function confirmTodoUpdate() {
 }
 
 function completeTodoUpdate(data) {
-  dbRefUsers.child(firebase.auth().currentUser.uid).child(updateTodoKey).update(data).then(function () {
+  // dbRefUsers.child(firebase.auth().currentUser.uid).child(updateTodoKey).update(data)
+  dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').doc(updateTodoKey).update(data).then(function () {
     console.log(`Tarefa ${data.name} atualizada com sucesso`);
   }).catch(function (err) {
     showError('Falha ao atualizar tarefa: ', err);
