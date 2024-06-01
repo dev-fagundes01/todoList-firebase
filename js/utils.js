@@ -129,11 +129,25 @@ function showAuth() {
   showItem(auth)
 }
 
+function promptForEmailPasswordCredentials() {
+  var email = prompt("Por favor, insira seu e-mail:")
+  var password = prompt("Por favor, insira seu senha:")
+
+  if(email || password == null) {
+    hideItem(loading)
+    return
+  }
+  return firebase.auth.EmailAuthProvider.credential(email, password)
+}
+
 // Função que lida com todos os erros
 function showError(prefix, err) {
-  console.log(err.code);
-  hideItem(loading)
+  console.error(err.code);
+  console.error(prefix, err);
+  alert(`${prefix} ${err}`)
 
+  hideItem(loading)
+  
   switch (err.code) {
     case 'auth/invalid-email': alert(prefix + '' + 'E-mail inválido!')      
       break;
@@ -148,8 +162,9 @@ function showError(prefix, err) {
       break;
     case 'auth/popup-closed-by-user': alert(prefix + '' + 'O popup de autenticação foi fechado antes da operação	ser concluida!')      
       break;
-    case 'storage/canceled':      
+    case 'auth/requires-recent-login': alert(prefix + '' + 'Esta operação é sensível e requer autenticação recente. Faça login novamente antes de tentar novamente esta solicitação.')      
       break;
+    case 'storage/canceled':      
     case 'storage/unauthorized': alert(prefix + '' + 'Falha ao acessar o Cloud Storage!') 
       break;
   

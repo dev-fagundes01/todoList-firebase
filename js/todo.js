@@ -44,7 +44,7 @@ todoForm.onsubmit = function (e) {
 }
 
 function completeTodoCreate(data) {
-  dbRefUsers.child(firebase.auth().currentUser.uid).push(data)
+  // dbRefUsers.child(firebase.auth().currentUser.uid).push(data)
   dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').add(data).then(function () {
     console.log(`Tarefa ${data.name} foi adicionada com sucesso`);
     nameInput.value = ''
@@ -137,35 +137,77 @@ function fillTodoList(dataSnapshot) {
 }
 // Remove tarefas
 function removeTodo(key) {
-  var idLi = document.querySelector('#' + key + '> span');
+  var idLi = document.querySelector('#' + CSS.escape(key));
+  var todoName = idLi.querySelector('span')
+  var todoImg = idLi.querySelector('img')
   if (!idLi) {
     console.error('Elemento não encontrado com o id: ', key);
   }
-  var removalConfirmation = confirm(`Você realmente deseja remover a tarefa '${idLi.innerHTML}'?`)
+  var removalConfirmation = confirm(`Você realmente deseja remover a tarefa '${todoName.innerHTML}'?`)
   if (removalConfirmation) {
     // dbRefUsers.child(firebase.auth().currentUser.uid).child(key).remove()
-    dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').doc(key).delete().catch(function (err) {
-      showError('Falha ao remover tarefa: ', err);
+    dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').doc(key).delete().then(function () {
+      console.log(`Tarefa ${todoName.innerHTML} removida com sucesso`)
+      removeFile(todoImg.src)
     })
+      .catch(function (err) {
+        showError('Falha ao remover tarefa: ', err);
+      })
   }
 }
 
 // Remove arquivos
-function removeFile(imgUrl) {
-  console.log(imgUrl);
+async function removeFile(imgUrl) {
+  if (!imgUrl) {
+    throw new Error('imgUrl não definido ou vazio.')
+  }
 
+  console.log(`Removendo arquivo: ${imgUrl}`)
   var result = imgUrl.indexOf('img/defaultTodo.png')
-  console.log(result);
 
   if (result === -1) {
-    firebase.storage().refFromURL(imgUrl).delete().then(function () {
-      console.log('Arquivo removido com sucesso');
-    }).catch(function (err) {
-      console.log('Falha ao remover arquivo');
-      console.log(err);
-    })
+    try {
+      firebase.storage().refFromURL(imgUrl).delete()
+      console.log('arquivo removido com sucesso')
+    } catch (err) {
+      console.log('Falha ao remover arquivo')
+      console.log(err)
+      throw err
+    }
   } else {
     console.log('img padrão removida da tarefa');
+  }
+}
+
+async function removeAllTodoAndFiles(userId) {
+  if (!userId) {
+    throw new Error('userId não definido ou vazio.')
+  }
+
+  try {
+    const tasksQuerySnapshot = await dbFirestore.doc(userId).collection('tarefas').get()
+
+    if (tasksQuerySnapshot.empty) {
+      console.log('Nenhuma tarefa encontrada para o usuário.')
+      return
+    }
+
+    const deletePromises = tasksQuerySnapshot.docs.map(async (doc) => {
+      const taskData = doc.data()
+      const taskId = doc.id
+
+      console.log(`Removendo tarefa: ${taskData.name}`)
+      await dbFirestore.doc(userId).collection('tarefas').doc(taskId).delete()
+
+      if (taskData.imgUrl) {
+        await removeFile(taskData.imgUrl)
+      }
+    })
+    await Promise.all(deletePromises)
+    console.log('Todas as tarefas e arquivos foram removidos.');
+  } catch (err) {
+    console.error('Erro ao remover tarefas e arquivos: ', err);
+    throw err
   }
 }
 
@@ -173,7 +215,8 @@ function removeFile(imgUrl) {
 var updateTodoKey = null
 function updateTodo(key) {
   updateTodoKey = key;
-  var todoName = document.querySelector('#' + key + '> span');
+  var todoId = document.querySelector('#' + CSS.escape(key));
+  var todoName = todoId.querySelector('span');
   todoFormTitle.innerHTML = '<strong>Editar a tarefa:</strong> ' + todoName.innerHTML
   nameInput.value = todoName.innerHTML;
   hideItem(submitTodoForm)

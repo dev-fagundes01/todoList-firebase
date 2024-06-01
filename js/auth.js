@@ -108,20 +108,53 @@ function updateUserName() {
 
 // Função que permite remover contas de usuarios
 function deleteCount() {
-    var confirmation = confirm('Realmente deseja excluir sua conta?')
+    var confirmation = confirm('Realmente deseja excluir sua conta? Se você fizer isso todos os seus dados serão excluidos.')
 
     if (confirmation) {
         showItem(loading)
-        firebase.auth().currentUser.delete()
-            .then(() => {
-                console.log("Conta de usuário excluída com sucesso.");
-            })
-            .catch((err) => {
-                showError('Falha ao excluir conta de usuário: ', err.message);
-            }).finally(
-                hideItem(loading)
-            )
+        const user = firebase.auth().currentUser
+
+        if (!user) {
+            showError('Nenhum usuário autenticado encontrado.')
+            hideItem(loading)
+            return
+        }
+
+        const userId = user.uid
+
+        removeAllTodoAndFiles(userId).then(() => {
+            console.log('Função removeAllTodoAndFiles executada')
+        }).then(() => {
+            return user.delete()
+        }).then(() => {
+            console.log("Conta de usuário excluída com sucesso.");
+        }).catch((err) => {
+            if (err.code === 'auth/requires-recent-login') {
+                reauthenticateUser()
+            } else {
+                showError('Falha ao excluir conta de usuário: ', err.message || err);
+            }
+        }).finally(
+            hideItem(loading)
+        )
     } else {
         console.error("Nenhum usuário autenticado encontrado.");
     }
+}
+
+function reauthenticateUser() {
+    var user = firebase.auth().currentUser
+    var providerId = user.providerData[0].providerId
+
+    if (providerId === 'password') {
+        var credentials = promptForEmailPasswordCredentials()
+        return user.reauthenticateWithCredential(credentials)
+    } else if (providerId === 'google.com') {
+        var provider = new firebase.auth.GoogleAuthProvider()
+        return user.reauthenticateWithPopup(provider)
+    } else if (providerId === 'github.com') {
+        var provider = new firebase.auth.GoogleAuthProvider()
+        return user.reauthenticateWithPopup(provider)
+    } 
+
 }
