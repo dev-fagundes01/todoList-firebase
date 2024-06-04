@@ -36,7 +36,7 @@ function signOut() {
 // Função que permite ao usuario  fazer a verificação do e-mail
 function sendEmailVerification() {
     showItem(loading)
-    var user = firebase.auth().currentUser
+    let user = firebase.auth().currentUser
     user.sendEmailVerification(actionCodeSettings).then(function () {
         alert('E-mail de verificação foi enviado para ' + user.email + '! Verifique sua caixa de entrada')
     }).catch(function (err) {
@@ -46,7 +46,7 @@ function sendEmailVerification() {
 
 // Função que permite o usuário redefinir a senha dele
 function sendPasswordResetEmail() {
-    var email = prompt('Redefinir senha! Informe o seu endereço de e-mail.', authForm.email.value);
+    let email = prompt('Redefinir senha! Informe o seu endereço de e-mail.', authForm.email.value);
     if (email) {
         showItem(loading);
         firebase.auth().sendPasswordResetEmail(email, actionCodeSettings).then(function () {
@@ -92,7 +92,7 @@ function signInWithFacebook() {
 
 // Função que permite atualizar nomes de usuarios
 function updateUserName() {
-    var newUserName = prompt('Informe um novo nome de usuário.', userName.innerHTML)
+    let newUserName = prompt('Informe um novo nome de usuário.', userName.innerHTML)
     if (newUserName && newUserName != '') {
         userName.innerHTML = newUserName
         showItem(loading)
@@ -108,7 +108,7 @@ function updateUserName() {
 
 // Função que permite remover contas de usuarios
 function deleteCount() {
-    var confirmation = confirm('Realmente deseja excluir sua conta? Se você fizer isso todos os seus dados serão excluidos.')
+    let confirmation = confirm('Realmente deseja excluir sua conta? Se você fizer isso todos os seus dados serão excluidos.')
 
     if (confirmation) {
         showItem(loading)
@@ -123,11 +123,7 @@ function deleteCount() {
         const userId = user.uid
 
         removeAllTodoAndFiles(userId).then(() => {
-            console.log('Função removeAllTodoAndFiles executada')
-        }).then(() => {
             return user.delete()
-        }).then(() => {
-            console.log("Conta de usuário excluída com sucesso.");
         }).catch((err) => {
             if (err.code === 'auth/requires-recent-login') {
                 reauthenticateUser()
@@ -143,18 +139,18 @@ function deleteCount() {
 }
 
 function reauthenticateUser() {
-    var user = firebase.auth().currentUser
-    var providerId = user.providerData[0].providerId
+    let user = firebase.auth().currentUser
+    let providerId = user.providerData[0].providerId
 
     if (providerId === 'password') {
-        var credentials = promptForEmailPasswordCredentials()
+        let credentials = promptForEmailPasswordCredentials()
         return user.reauthenticateWithCredential(credentials)
     } else if (providerId === 'google.com') {
-        var provider = new firebase.auth.GoogleAuthProvider()
+        let provider = new firebase.auth.GoogleAuthProvider()
         return user.reauthenticateWithPopup(provider)
     } else if (providerId === 'github.com') {
-        var provider = new firebase.auth.GoogleAuthProvider()
+        let provider = new firebase.auth.GoogleAuthProvider()
         return user.reauthenticateWithPopup(provider)
-    } 
+    }
 
 }

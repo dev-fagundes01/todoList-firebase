@@ -1,38 +1,37 @@
 // Definindo referências para elementos da página
-var auth = document.querySelector('.auth')
-var authForm = document.getElementById('authForm')
-var authFormTitle = document.getElementById('authFormTitle')
-var register = document.getElementById('register')
-var access = document.getElementById('access')
-var loading = document.getElementById('loading')
-var userContent = document.getElementById('userContent')
-var userEmail = document.getElementById('userEmail')
-var pEmailVerified = document.getElementById('pEmailVerified')
-var sendEmailVerificationDiv = document.getElementById('sendEmailVerificationDiv')
-var passwordReset = document.getElementById('passwordReset')
-var userImg = document.getElementById('userImg')
-var userName = document.getElementById('userName')
-var search = document.getElementById('search')
-var progressFeedback = document.getElementById('progressFeedback')
-var progress = document.getElementById('progress')
-var playPauseBtn = document.getElementById('playPauseBtn')
-var cancelBtn = document.getElementById('cancelBtn')
-var divUpdateTodo = document.getElementById('divUpdateTodo')
+let auth = document.querySelector('.auth')
+let authForm = document.getElementById('authForm')
+let authFormTitle = document.getElementById('authFormTitle')
+let register = document.getElementById('register')
+let access = document.getElementById('access')
+let loading = document.getElementById('loading')
+let userContent = document.getElementById('userContent')
+let userEmail = document.getElementById('userEmail')
+let pEmailVerified = document.getElementById('pEmailVerified')
+let sendEmailVerificationDiv = document.getElementById('sendEmailVerificationDiv')
+let passwordReset = document.getElementById('passwordReset')
+let userImg = document.getElementById('userImg')
+let userName = document.getElementById('userName')
+let search = document.getElementById('search')
+let progressFeedback = document.getElementById('progressFeedback')
+let progress = document.getElementById('progress')
+let playPauseBtn = document.getElementById('playPauseBtn')
+let cancelBtn = document.getElementById('cancelBtn')
+let divUpdateTodo = document.getElementById('divUpdateTodo')
 
-var todoForm = document.querySelector('.todoForm')
-var submitTodoForm = document.querySelector('.submitTodoForm')
-var submitTodoForm = document.querySelector('.submitTodoForm')
-var ulTodoList = document.querySelector('.ulTodoList')
-var todoCount = document.querySelector('.todoCount')
+let todoForm = document.querySelector('.todoForm')
+let submitTodoForm = document.querySelector('.submitTodoForm')
+let ulTodoList = document.querySelector('.ulTodoList')
+let todoCount = document.querySelector('.todoCount')
 
 // Função que muda o tipo do input de password para text e vice-versa
 function togglePasswordVisibility() {
-  var showPassword = document.querySelector(".img-showPassword");
-  var passwordField = document.getElementById("password");
+  let showPassword = document.querySelector(".img-showPassword");
+  let passwordField = document.getElementById("password");
 
   if (passwordField.type == 'password') {
     showPassword.src = './img/eye_120221.png'
-    passwordField.type = 'text'        
+    passwordField.type = 'text'
   } else if (passwordField.type == 'text') {
     showPassword.src = './img/eye.png'
     passwordField.type = 'password'
@@ -68,11 +67,11 @@ function hideItem(element) {
 }
 
 function showUserContent(user) {
-  if(user.providerData[0].providerId != 'password') {
+  if (user.providerData[0].providerId != 'password') {
     pEmailVerified.innerHTML = 'Autenticação por provedor confiável, não é necessário verificar e-mail'
     hideItem(sendEmailVerificationDiv)
   } else {
-    if(user.emailVerified) {
+    if (user.emailVerified) {
       pEmailVerified.innerHTML = 'E-mail verificado'
       hideItem(sendEmailVerificationDiv)
     } else {
@@ -86,15 +85,15 @@ function showUserContent(user) {
   userEmail.innerHTML = user.email
   hideItem(auth)
 
-  getDefaultTodoList() 
-  search.onkeyup = function() {
+  getDefaultTodoList()
+  search.onkeyup = function () {
     if (search.value != '') {
-      var searchText = search.value.toLowerCase()
+      let searchText = search.value.toLowerCase()
       dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas')
-      .orderBy('nameLowerCase')
-      .startAt(searchText).endAt(searchText + '\uf8ff').get().then(function (dataSnapshot) {
-        fillTodoList(dataSnapshot)
-      })
+        .orderBy('nameLowerCase')
+        .startAt(searchText).endAt(searchText + '\uf8ff').get().then(function (dataSnapshot) {
+          fillTodoList(dataSnapshot)
+        })
 
       // dbRefUsers.child(user.uid)
       // .orderByChild('nameLowerCase')
@@ -109,7 +108,7 @@ function showUserContent(user) {
 }
 
 // Busca tarefas em tempo real (Listagem padrão usando o on)
-function getDefaultTodoList( ) {
+function getDefaultTodoList() {
   dbFirestore.doc(firebase.auth().currentUser.uid).collection('tarefas').orderBy('nameLowerCase').onSnapshot(function (dataSnapshot) {
     fillTodoList(dataSnapshot)
   })
@@ -130,10 +129,10 @@ function showAuth() {
 }
 
 function promptForEmailPasswordCredentials() {
-  var email = prompt("Por favor, insira seu e-mail:")
-  var password = prompt("Por favor, insira seu senha:")
+  let email = prompt("Por favor, insira seu e-mail:")
+  let password = prompt("Por favor, insira seu senha:")
 
-  if(email || password == null) {
+  if (email || password == null) {
     hideItem(loading)
     return
   }
@@ -147,37 +146,37 @@ function showError(prefix, err) {
   alert(`${prefix} ${err}`)
 
   hideItem(loading)
-  
+
   switch (err.code) {
-    case 'auth/invalid-email': alert(prefix + '' + 'E-mail inválido!')      
+    case 'auth/invalid-email': alert(prefix + '' + 'E-mail inválido!')
       break;
-    case 'auth/wrong-password': 
-    case 'auth/internal-error': alert(prefix + '' + 'Senha inválida!')      
+    case 'auth/wrong-password':
+    case 'auth/internal-error': alert(prefix + '' + 'Senha inválida!')
       break;
-    case 'auth/weak-password': alert(prefix + '' + 'Senha deve ter no minimo 6 caracteres!')      
+    case 'auth/weak-password': alert(prefix + '' + 'Senha deve ter no minimo 6 caracteres!')
       break;
-    case 'auth/email-already-in-use': alert(prefix + '' + 'E-mail já está em uso por outra conta!')      
+    case 'auth/email-already-in-use': alert(prefix + '' + 'E-mail já está em uso por outra conta!')
       break;
-    case 'auth/account-exists-with-different-credential': alert(prefix + '' + 'Já existe uma conta com o mesmo endereço de e-mail, mas com credenciais de login diferentes. Faça login usando um provedor associado a este endereço de e-mail.')      
+    case 'auth/account-exists-with-different-credential': alert(prefix + '' + 'Já existe uma conta com o mesmo endereço de e-mail, mas com credenciais de login diferentes. Faça login usando um provedor associado a este endereço de e-mail.')
       break;
-    case 'auth/popup-closed-by-user': alert(prefix + '' + 'O popup de autenticação foi fechado antes da operação	ser concluida!')      
+    case 'auth/popup-closed-by-user': alert(prefix + '' + 'O popup de autenticação foi fechado antes da operação	ser concluida!')
       break;
-    case 'auth/requires-recent-login': alert(prefix + '' + 'Esta operação é sensível e requer autenticação recente. Faça login novamente antes de tentar novamente esta solicitação.')      
+    case 'auth/requires-recent-login': alert(prefix + '' + 'Esta operação é sensível e requer autenticação recente. Faça login novamente antes de tentar novamente esta solicitação.')
       break;
-    case 'storage/canceled':      
-    case 'storage/unauthorized': alert(prefix + '' + 'Falha ao acessar o Cloud Storage!') 
+    case 'storage/canceled':
+    case 'storage/unauthorized': alert(prefix + '' + 'Falha ao acessar o Cloud Storage!')
       break;
-  
+
     default: alert(prefix + '' + err.message)
   }
 }
 
 // Atributos extras de configuração de e-mail
-var actionCodeSettings = {
+let actionCodeSettings = {
   url: 'https://todolist-2c452.firebaseapp.com'
-} 
+}
 
-var database = firebase.database()
-var dbRefUsers = database.ref('users')
+let database = firebase.database()
+let dbRefUsers = database.ref('users')
 
-var dbFirestore = firebase.firestore().collection('users')
+let dbFirestore = firebase.firestore().collection('users')
